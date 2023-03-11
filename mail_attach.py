@@ -18,7 +18,7 @@ def send_csv(Zeit, temperature):
             
 
             if (result != -1): # meaning: if result!=-1>>then False
-                print('login OK')
+                print('gmail-login OK')
                 counter = 0
                 
                 smtp.to('stefan.taubert.apweiler@gmail.com')
@@ -57,7 +57,9 @@ def send_csv(Zeit, temperature):
                 smtp.write('...\n') #  suppose to be important??
                 smtp.send() # does the proper ending
                 smtp.quit()
-                
+                f.close()
+                f = open("/data/log.txt",  "a" )
+                f.write("\n" +  str(Zeit) + " : Email sent" + "\n")
                 f.close()
                 print('Email with datalog.txt has been sent')
                 break
@@ -66,6 +68,11 @@ def send_csv(Zeit, temperature):
             pass
         if (counter == 5):
             print("Email-error")
+            f = open("/data/log.txt",  "a" )
+            f.write("\n" +  str(Zeit) + ": Email error, counter =5  " + "\n")
+            f.close()
+            
+            
 
                        
    
