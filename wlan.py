@@ -35,7 +35,7 @@ def wifi_on(Zeit):
         else:
             print('try to connect Fritzbox(1)')
             wlanSSID = 'FRITZBOX Keller'
-            wlanPW = '08950213127662261769'
+            wlanPW = ''
             wlan.active(True)
             wlan.connect(wlanSSID, wlanPW)
             for i in range(20):
