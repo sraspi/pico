@@ -59,7 +59,7 @@ def wifi_on(Zeit):
             f.close()
             print('Try to connect Iphone')
             wlanSSID = 'Stefans Iphone'
-            wlanPW = 'StJ19hot'
+            wlanPW = ''
             wlan.active(True)
             wlan.connect(wlanSSID, wlanPW)
             for i in range(20):
