@@ -1,4 +1,4 @@
-def wifi_on(Zeit):
+def wifi_on(Zeit,R):
     # Bibliotheken laden
     import machine
     import network
@@ -9,12 +9,13 @@ def wifi_on(Zeit):
     import ustruct as struct
     import _thread
     import utime
+    
 
     # WLAN-Konfiguration
     
     rp2.country('DE')
     # Winterzeit / Sommerzeit
-    GMT_OFFSET = 3600 * 1 # 3600 = 1 h (Winterzeit)
+    GMT_OFFSET = 3600 * 2 # 3600 = 1 h (Winterzeit)
     #GMT_OFFSET = 3600 * 2 # 3600 = 1 h (Sommerzeit)
     # Status-LED
     led_onboard = machine.Pin('LED', machine.Pin.OUT, value=0)
@@ -27,15 +28,12 @@ def wifi_on(Zeit):
         wlan = network.WLAN(network.STA_IF)
         if wlan.isconnected():
             print('wifi connected(1)/ WLAN-Status:', wlan.status())
-            f = open("/data/log.txt",  "a" )
-            f.write("\n" +  "Fritzbox connected(1)")
-            f.close()
             led_onboard.on()
             
         else:
             print('try to connect Fritzbox(1)')
             wlanSSID = 'FRITZBOX Keller'
-            wlanPW = ''
+            wlanPW = 'pw'
             wlan.active(True)
             wlan.connect(wlanSSID, wlanPW)
             for i in range(20):
@@ -50,16 +48,13 @@ def wifi_on(Zeit):
                 
         
         if wlan.isconnected():
-            print('Try to connect Fritzbox(2) / Status:', wlan.status())
+            #print('Try to connect Fritzbox(2) / Status:', wlan.status())
             led_onboard.on()    
         else:
             print("Fritzbox-connection failed")
-            f = open("/data/log.txt",  "a" )
-            f.write("\n" +  "Fritzbox-connection failed")
-            f.close()
             print('Try to connect Iphone')
             wlanSSID = 'Stefans Iphone'
-            wlanPW = ''
+            wlanPW = 'StJ19hot'
             wlan.active(True)
             wlan.connect(wlanSSID, wlanPW)
             for i in range(20):
@@ -75,9 +70,6 @@ def wifi_on(Zeit):
             
             if wlan.isconnected():
                 print('wifi-connected(3) / Status:', wlan.status())
-                f = open("/data/log.txt",  "a" )
-                f.write("\n" +  "Iphone connected")
-                f.close()
                 led_onboard.on()
 
     # Funktion: Zeit per NTP holen
@@ -100,24 +92,22 @@ def wifi_on(Zeit):
     def setTimeRTC():
         # NTP-Zeit holen
         tm = getTimeNTP()
-        machine.RTC().datetime((tm[0], tm[1], tm[2], tm[6] + 1, tm[3], tm[4], tm[5], 0))
+        machine.RTC().datetime((tm[0], tm[1], tm[2], tm[6], tm[3], tm[4], tm[5], 0))
         
         
     # WLAN-Verbindung herstellen
 
     wlanConnect()
     time.sleep(1)
-    try:
-        
+    if R:
+        print("RTC set!")
         setTimeRTC()
         a = machine.RTC().datetime()
         Zeit = (str(a[0]) + "." + str(a[1]) + "." + str(a[2]) + " " + str(a[4]) + ":" + str(a[5]) + ":" + str(a[6]))
-             
-    except:
-        print("wifi problem?, NPT-failed")
-        print()
-    return Zeit
+        R=False
         
+    return (Zeit, R)
+            
 
 
 
